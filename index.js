@@ -3,14 +3,14 @@ const axios = require('axios');
 const app = express();
 app.use(express.json());
 
-// Endpoint untuk menerima tembakan dari Cloudflare Workers kamu
-app.post('/gas', async (req, res) => {
+// Jembatan pintar: Bisa nerima alamat apa saja (/v1/cek-saldo, /v1/transaction, dll)
+app.post('/*', async (req, res) => {
     try {
-        // Meneruskan request ke Digiflazz
-        const response = await axios.post('https://api.digiflazz.com/v1/transaction', req.body);
+        // req.path akan membaca tujuan akhir, lalu ditempel ke alamat asli Digiflazz
+        const targetUrl = 'https://api.digiflazz.com' + req.path;
+        const response = await axios.post(targetUrl, req.body);
         res.json(response.data);
     } catch (error) {
-        // Jika gagal, tampilkan pesan error dari Digiflazz (termasuk informasi IP yang terdeteksi)
         if (error.response) {
             res.status(error.response.status).json(error.response.data);
         } else {
@@ -20,4 +20,4 @@ app.post('/gas', async (req, res) => {
 });
 
 const PORT = process.env.PORT || 8080;
-app.listen(PORT, () => console.log(`Server Bridge Digiflazz jalan di port ${PORT}`));
+app.listen(PORT, () => console.log(`Jembatan Pintar jalan di port ${PORT}`));
