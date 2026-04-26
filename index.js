@@ -8,6 +8,17 @@ app.get('/', (req, res) => {
     res.status(200).send('SERVER DIGIFLAZZ SIAP BOSSS!');
 });
 // 👆 ========================================== 👆
+// 👇 PINTU KHUSUS BUAT NGECEK IP KOYEB 👇
+app.get('/cek-ip', async (req, res) => {
+    try {
+        const getIp = await axios.get('https://api.ipify.org');
+        res.status(200).send(`IP KOYEB BOS SAAT INI: ${getIp.data}`);
+    } catch (error) {
+        res.status(500).send('Gagal cek IP');
+    }
+});
+// 👆 ===================================== 👆
+
 
 app.post('/*', async (req, res) => {
     try {
